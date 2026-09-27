@@ -1,0 +1,7 @@
+streamlit>=1.30.0
+rembg>=2.0.50
+onnxruntime>=1.16.0
+numpy>=1.24.0
+pillow>=10.0.0
+scikit-image>=0.21.0
+filelock>=3.12.0
