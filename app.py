@@ -1,5 +1,5 @@
 import streamlit as st
-from PIL import Image, ImageOps, ImageFilter, ImageDraw
+from PIL import Image, ImageOps, ImageFilter, ImageDraw, ImageEnhance
 import numpy as np
 from rembg import remove
 import io
@@ -13,9 +13,7 @@ st.write(
     "a subtle floor reflection, and a grounded contact shadow."
 )
 
-# Cap the longest edge before processing. Phone cameras produce huge images
-# (often 3000-4000px) which slow down segmentation a lot without improving
-# the final result, since the studio backdrop is generated at this same size.
+# Cap the longest edge before processing to prevent free-tier mobile RAM crashes
 MAX_DIMENSION = 900
 
 
@@ -159,7 +157,7 @@ if uploaded_file is not None:
     input_image = downscale_if_needed(input_image, max_dim=MAX_DIMENSION)
 
     st.subheader("Original Image")
-    st.image(input_image,width='stretch')
+    st.image(input_image, width='stretch')
 
     if st.button("✨ Process Studio Shot"):
         try:
@@ -169,9 +167,9 @@ if uploaded_file is not None:
                 # Step 1: Remove background
                 product = remove(input_image)
                 
-                
-                 
-                
+                # Step 1.5: Boost product visibility (Brightness & Contrast) so it pops
+                product = ImageEnhance.Brightness(product).enhance(1.15)
+                product = ImageEnhance.Contrast(product).enhance(1.10)
 
                 # Step 2: Studio backdrop (wall + floor + vignette)
                 background = create_studio_background((width, height))
@@ -198,7 +196,7 @@ if uploaded_file is not None:
                 final_image.paste(product, (0, 0), product)
 
             st.subheader("Studio Output")
-            st.image(final_image, use_container_width=True)
+            st.image(final_image, width='stretch')
 
             st.download_button(
                 label="📥 Download Studio Image",
