@@ -16,7 +16,7 @@ st.write(
 # Cap the longest edge before processing. Phone cameras produce huge images
 # (often 3000-4000px) which slow down segmentation a lot without improving
 # the final result, since the studio backdrop is generated at this same size.
-MAX_DIMENSION = 1600
+MAX_DIMENSION = 900
 
 
 def load_image_input():
@@ -156,10 +156,10 @@ uploaded_file = load_image_input()
 
 if uploaded_file is not None:
     input_image = Image.open(uploaded_file).convert("RGB")
-    input_image = downscale_if_needed(input_image)
+    input_image = downscale_if_needed(input_image, max_dim=MAX_DIMENSION)
 
     st.subheader("Original Image")
-    st.image(input_image, use_container_width=True)
+    st.image(input_image,width='stretch')
 
     if st.button("✨ Process Studio Shot"):
         try:
@@ -168,6 +168,10 @@ if uploaded_file is not None:
 
                 # Step 1: Remove background
                 product = remove(input_image)
+                
+                
+                 
+                
 
                 # Step 2: Studio backdrop (wall + floor + vignette)
                 background = create_studio_background((width, height))
